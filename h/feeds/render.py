@@ -29,8 +29,7 @@ def render_atom(request, annotations, atom_url, html_url, title, subtitle):
     """
     def annotation_url(annotation):
         """Return the HTML permalink URL for the given annotation."""
-        url = request.route_url('annotation', id=annotation.id)
-        return url
+        return request.route_url('annotation', id=annotation.id)
 
     def annotation_api_url(annotation):
         """Return the JSON API URL for the given annotation."""
