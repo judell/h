@@ -3,6 +3,8 @@ from pyramid import renderers
 from h.feeds import atom
 from h.feeds import rss
 
+def bouncer_url(request):
+  return request.registry.settings['h.bouncer_url']
 
 def render_atom(request, annotations, atom_url, html_url, title, subtitle):
     """Return a rendered Atom feed of the given annotations.
@@ -27,7 +29,8 @@ def render_atom(request, annotations, atom_url, html_url, title, subtitle):
     """
     def annotation_url(annotation):
         """Return the HTML permalink URL for the given annotation."""
-        return request.route_url('annotation', id=annotation.id)
+        url = request.route_url('annotation', id=annotation.id)
+        return url
 
     def annotation_api_url(annotation):
         """Return the JSON API URL for the given annotation."""
@@ -36,7 +39,8 @@ def render_atom(request, annotations, atom_url, html_url, title, subtitle):
     feed = atom.feed_from_annotations(
         annotations=annotations, atom_url=atom_url,
         annotation_url=annotation_url, annotation_api_url=annotation_api_url,
-        html_url=html_url, title=title, subtitle=subtitle)
+        html_url=html_url, bouncer_url = bouncer_url(request),
+        title=title, subtitle=subtitle)
 
     response = renderers.render_to_response(
         'h:templates/atom.xml.jinja2', {"feed": feed}, request=request)
@@ -71,8 +75,8 @@ def render_rss(request, annotations, rss_url, html_url, title, description):
 
     feed = rss.feed_from_annotations(
         annotations=annotations, annotation_url=annotation_url,
-        rss_url=rss_url, html_url=html_url, title=title,
-        description=description)
+        rss_url=rss_url, html_url=html_url, bouncer_url=bouncer_url(request), 
+        title=title, description=description)
 
     response = renderers.render_to_response(
         'h:templates/rss.xml.jinja2', {"feed": feed}, request=request)

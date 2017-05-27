@@ -6,6 +6,10 @@ from h._compat import urlparse
 #   https://tools.ietf.org/html/rfc4151#section-2.1
 FEED_TAG_DATE='2015-09'
 
+def description_with_direct_link(bouncer_url, annotation):
+    """Add a direct link to a description."""
+    direct_link = 'Direct link: {}/{}/{}'.format( bouncer_url, annotation.id, annotation.uri)
+    return annotation.description + '\n\n' + direct_link
 
 def tag_uri_for_annotation(annotation, annotation_url):
     """Return a tag URI (unique identifier) for the given annotation.

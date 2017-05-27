@@ -10,7 +10,7 @@ _ = i18n.TranslationStringFactory(__package__)
 
 
 def _feed_entry_from_annotation(
-        annotation, annotation_url, annotation_api_url=None):
+        annotation, annotation_url, bouncer_url, annotation_api_url=None):
     """Return an Atom feed entry for the given annotation.
 
     :returns: A logical representation of the Atom feed entry as a dict,
@@ -31,7 +31,7 @@ def _feed_entry_from_annotation(
         "title": annotation.title,
         "updated": _utc_iso8601_string(annotation.updated),
         "published": _utc_iso8601_string(annotation.created),
-        "content": annotation.description,
+        "content": h.feeds.util.description_with_direct_link(bouncer_url, annotation),
         "links": [
             {"rel": "alternate", "type": "text/html",
              "href": annotation_url(annotation.annotation)},
@@ -52,7 +52,7 @@ def _utc_iso8601_string(timestamp):
 
 def feed_from_annotations(
         annotations, atom_url, annotation_url, annotation_api_url=None,
-        html_url=None, title=None, subtitle=None):
+        html_url=None, bouncer_url=None, title=None, subtitle=None):
     """Return an Atom feed for the given list of annotations.
 
     :returns: A logical representation of an Atom feed as a Python dict
@@ -70,7 +70,7 @@ def feed_from_annotations(
             {"rel": "alternate", "type": "text/html", "href": html_url})
 
     entries = [
-        _feed_entry_from_annotation(a, annotation_url, annotation_api_url)
+        _feed_entry_from_annotation(a, annotation_url, bouncer_url, annotation_api_url)
         for a in annotations]
 
     feed = {
